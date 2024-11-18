@@ -10,6 +10,7 @@ python = "^3.10"
 django = "^5.1.2"
 djangorestframework = "^3.15.2"
 mysqlclient = "^2.2.6"
+matplotlib = "^3.9.2"
 
 
 [build-system]

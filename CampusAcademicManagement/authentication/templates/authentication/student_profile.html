@@ -85,3 +85,30 @@
     <td>{{ student_info.fee_reimbursement }}</td>
   </tr>
 </table>
+<br><br>
+<div>
+  {% if results_by_semester %}
+  <h2>Semester-wise Results</h2>
+  {% for semester, results in results_by_semester.items %}
+  <h3>Semester {{ semester }}</h3>
+  <table border="1">
+    <thead>
+      <tr>
+        <th>Course Name</th>
+        <th>Grade</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for result in results %}
+      <tr>
+        <td>{{ result.courseName }}</td>
+        <td>{{ result.grade }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% endfor %} {% else %}
+  <p>No results found for this student.</p>
+  {% endif %}
+</div>
+</div>
