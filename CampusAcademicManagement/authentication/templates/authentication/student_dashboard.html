@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Student Dashboard</title>
+    <style>
+      /* Sidebar styling */
+      .sidebar {
+        width: 200px;
+        height: 100vh;
+        background-color: #333;
+        color: #fff;
+        padding: 20px;
+        position: fixed;
+      }
+      .sidebar h2 {
+        font-size: 18px;
+        margin-bottom: 20px;
+      }
+      .sidebar a {
+        display: block;
+        color: #fff;
+        text-decoration: none;
+        padding: 10px;
+        margin: 10px 0;
+        border-radius: 5px;
+      }
+      .sidebar a:hover {
+        background-color: #444;
+      }
+
+      /* Main content styling */
+      .main-content {
+        margin-left: 2px;
+        padding: 20px;
+      }
+
+      /* Report and analysis section */
+      .report-analysis {
+        display: flex;
+        justify-content: space-between;
+      }
+      .card {
+        padding: 20px;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        width: 45%;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
+
+      /* Button styles */
+      .btn {
+        padding: 10px 20px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        margin-top: 20px;
+      }
+      .btn-sem1 {
+        background-color: #ffd966;
+      }
+      .btn-sem2 {
+        background-color: #ff9900;
+      }
+      .btn-sem3 {
+        background-color: #ff6600;
+      }
+      .btn-details {
+        background-color: #000;
+        color: #fff;
+      }
+
+      /* Progress section */
+      .progress {
+        text-align: center;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="sidebar">
+      <h2>Campus Genius</h2>
+      <a href="#">Dashboard</a>
+      <a href="{% url 'student_profile' %}">My Profile</a>
+      <a href="#">Curriculum</a>
+      <a href="#">Attendance</a>
+      <a href="#">Clubs</a>
+      <a href="#">Achievements</a>
+      <a href="#">Feedback</a>
+      <a href="#">Announcements</a>
+    </div>
+
+    <div class="main-content">
+      <h1>Dashboard Management</h1>
+
+      <div class="report-analysis">
+        <div class="card">
+          <h3>Report and Analysis</h3>
+          <canvas id="lineChart"></canvas>
+          <div>
+            <button class="btn btn-sem1">Sem 1</button>
+            <button class="btn btn-sem2">Sem 2</button>
+            <button class="btn btn-sem3">Sem 3</button>
+            <button class="btn btn-details">Details</button>
+          </div>
+        </div>
+
+        <div class="card progress">
+          <h3>Progress</h3>
+          <p>Assignment: 70%</p>
+          <p>Attendance: 70%</p>
+          <p>Grades: 70%</p>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>Counselling Feedback</h3>
+        <p>
+          "I am extremely satisfied! Your professional team provided precise
+          service."
+        </p>
+        <button class="btn btn-reply">Reply</button>
+      </div>
+    </div>
+  </body>
+</html>
