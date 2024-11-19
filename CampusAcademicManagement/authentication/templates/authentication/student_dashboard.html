@@ -68,13 +68,11 @@
   <body>
     <div class="sidebar">
       <h2>Campus Genius</h2>
-      <!-- Sidebar links (unchanged) -->
-      <a href="#">Dashboard</a>
       <a href="{% url 'student_profile' %}">My Profile</a>
       <a href="#">Curriculum</a>
       <a href="#">Attendance</a>
       <br />
-      <a href="#">Clubs</a>
+      <a href="{% url 'clubs' %}">Clubs</a>
       <a href="#">Achievements</a>
       <a href="{% url 'suggestion' %}">Suggestion</a>
       <a href="{% url 'event_registration' %}">Event Registration</a>

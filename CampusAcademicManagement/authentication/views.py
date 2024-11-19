@@ -259,28 +259,14 @@ def announcements_list(request):
 
 def event_registration(request):
     cursor = connection.cursor()
-
-    # Execute a query to fetch all event registrations
     query = "SELECT * FROM eventregistration"
     cursor.execute(query)
-
-    # Fetch all rows from the executed query
     rows = cursor.fetchall()
 
-    # Manually convert the rows into a list of dictionaries
-    columns = [column[0] for column in cursor.description]  # type: ignore # Get column names from the cursor description
-    events = [
-        dict(zip(columns, row)) for row in rows
-    ]  # Convert each row to a dictionary
-
-    # Close the cursor and connection
+    columns = [column[0] for column in cursor.description]  # type: ignore
+    events = [dict(zip(columns, row)) for row in rows]
     cursor.close()
     connection.close()
-
-    # Debug print statement to verify the fetched data
-    print(events)
-
-    # Render the template with the fetched data
     return render(request, "authentication/event_registration.html", {"events": events})
 
 
@@ -344,3 +330,37 @@ def suggestion_view(request):
         "authentication/suggestion.html",
         {"suggestions": suggestion_list, "types": suggestion_types},
     )
+
+
+def clubs_page(request):
+    with connection.cursor() as cursor:
+        cursor.execute(
+            """
+            SELECT 
+                c.clubID, 
+                c.name AS club_name, 
+                c.moto AS club_motto, 
+                COUNT(cm.member_roll) as number_of_members, 
+                c.registration_form_link, 
+                GROUP_CONCAT(distinct cm.member_roll) AS coordinators
+            FROM clubs c
+            LEFT JOIN clubMembers cm ON c.clubID = cm.clubID AND cm.their_role = 'coordinator'
+            GROUP BY c.clubID
+        """
+        )
+        clubs = cursor.fetchall()
+
+    # Structure the data
+    club_details = []
+    for row in clubs:
+        club_details.append(
+            {
+                "clubID": row[0],
+                "name": row[1],
+                "motto": row[2],
+                "number_of_members": row[3],
+                "registration_form_link": row[4],
+                "coordinators": row[5] if row[5] else "No Coordinators",
+            }
+        )
+    return render(request, "authentication/clubs.html", {"club_details": club_details})
