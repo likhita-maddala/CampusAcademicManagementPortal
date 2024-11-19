@@ -3,6 +3,7 @@ from django.contrib import messages
 from django.db import connection
 from .forms import LoginForm
 from decimal import Decimal
+from django.utils.timezone import now
 
 
 # Login view
@@ -281,3 +282,65 @@ def event_registration(request):
 
     # Render the template with the fetched data
     return render(request, "authentication/event_registration.html", {"events": events})
+
+
+def suggestion_view(request):
+    student_id = request.session["rollno"]
+    if request.method == "POST":
+        # Get data from the form
+        suggestion_type = request.POST.get("type")
+        message = request.POST.get("message")
+
+        # Insert the suggestion into the database
+        with connection.cursor() as cursor:
+            cursor.execute(
+                """
+                INSERT INTO suggestion (type, message, date_time, studentID)
+                VALUES (%s, %s, %s, %s)
+                """,
+                [suggestion_type, message, now(), student_id],
+            )
+
+        # Redirect to the same page to display the updated suggestions
+        return redirect("suggestion")
+
+    # Fetch suggestions for the logged-in user
+    with connection.cursor() as cursor:
+        cursor.execute(
+            """
+            SELECT suggestionID, type, message, date_time 
+            FROM suggestion 
+            WHERE studentID = %s 
+            ORDER BY date_time DESC
+            """,
+            [student_id],
+        )
+        suggestions = cursor.fetchall()
+
+    # Prepare suggestions as a list of dictionaries for easy use in the template
+    suggestion_list = [
+        {
+            "id": suggestion[0],
+            "type": suggestion[1],
+            "message": suggestion[2],
+            "date_time": suggestion[3],
+        }
+        for suggestion in suggestions
+    ]
+
+    # Define the suggestion types
+    suggestion_types = [
+        "Faculty",
+        "Department",
+        "Infrastructure",
+        "Course",
+        "Management",
+        "Ragging",
+        "Others",
+    ]
+
+    return render(
+        request,
+        "authentication/suggestion.html",
+        {"suggestions": suggestion_list, "types": suggestion_types},
+    )
