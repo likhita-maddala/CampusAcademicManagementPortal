@@ -33,6 +33,8 @@ def login_view(request):
                 # Redirect based on user role
                 if user_role == "student":
                     return redirect("student_home")
+                elif user_role == "Admin":
+                    return redirect("admin_home")
                 else:
                     return redirect(
                         "home"
@@ -42,7 +44,7 @@ def login_view(request):
     else:
         form = LoginForm()
 
-    return render(request, "authentication/login.html", {"form": form})
+    return render(request, "main/login.html", {"form": form})
 
 
 # Home view for generic roles
@@ -50,9 +52,33 @@ def home_view(request):
     if "rollno" in request.session:
         rollno = request.session["rollno"]
         role = request.session["role"]
-        return render(
-            request, "authentication/home.html", {"rollno": rollno, "role": role}
+        return render(request, "main/home.html", {"rollno": rollno, "role": role})
+    return redirect("login")
+
+
+def admin_home(request):
+    if "rollno" in request.session and request.session["role"] == "Admin":
+        # Fetch admin name using adminID (rollno in session)
+        cursor = connection.cursor()
+        cursor.execute(
+            "SELECT name FROM admin WHERE adminID = %s", [request.session["rollno"]]
         )
+        admin_data = cursor.fetchone()
+
+        if admin_data:
+            admin_name = admin_data[0]
+            print("hello")
+            return render(
+                request,
+                "admin_anits/admin-home.html",
+                {"admin_name": admin_name},
+            )
+
+        # Handle case where adminID is invalid
+        messages.error(request, "Admin not found. Please log in again.")
+        return redirect("login")
+
+    # Redirect to login if user is not authenticated or not an admin
     return redirect("login")
 
 
@@ -123,7 +149,7 @@ def student_home(request):
         # Pass semester GPAs and semester names to the template
         return render(
             request,
-            "authentication/student_dashboard.html",
+            "student/student_dashboard.html",
             {
                 "semesters": list(semester_gpas.keys()),
                 "gpas": [round(gpa, 2) for gpa in semester_gpas.values()],
@@ -215,7 +241,7 @@ def student_profile_view(request):
 
             return render(
                 request,
-                "authentication/student_profile.html",
+                "student/student_profile.html",
                 {
                     "student_info": student_info,
                     "results_by_semester": results_by_semester,
@@ -252,7 +278,7 @@ def announcements_list(request):
     # Render the announcements template with the data
     return render(
         request,
-        "authentication/announcements.html",
+        "student/announcements.html",
         {"announcements": announcements_data},
     )
 
@@ -267,7 +293,7 @@ def event_registration(request):
     events = [dict(zip(columns, row)) for row in rows]
     cursor.close()
     connection.close()
-    return render(request, "authentication/event_registration.html", {"events": events})
+    return render(request, "student/event_registration.html", {"events": events})
 
 
 def suggestion_view(request):
@@ -327,7 +353,7 @@ def suggestion_view(request):
 
     return render(
         request,
-        "authentication/suggestion.html",
+        "student/suggestion.html",
         {"suggestions": suggestion_list, "types": suggestion_types},
     )
 
@@ -363,4 +389,95 @@ def clubs_page(request):
                 "coordinators": row[5] if row[5] else "No Coordinators",
             }
         )
-    return render(request, "authentication/clubs.html", {"club_details": club_details})
+    return render(request, "student/clubs.html", {"club_details": club_details})
+
+
+from django import forms
+from django.shortcuts import render, redirect
+from django.contrib import messages
+from django.db import connection
+
+
+# Define a form for creating clubs
+class ClubForm(forms.Form):
+    name = forms.CharField(label="Club Name", max_length=30, required=True)
+    moto = forms.CharField(label="Moto", widget=forms.Textarea, required=True)
+    registration_form_link = forms.URLField(
+        label="Registration Form Link", required=False
+    )
+    coordinator_roll = forms.CharField(
+        label="Coordinator Roll Number", max_length=20, required=True
+    )
+
+
+def admin_club(request):
+    # Fetch existing clubs from the database
+    cursor = connection.cursor()
+    cursor.execute("SELECT clubID, name, moto, registration_form_link FROM clubs")
+    clubs = cursor.fetchall()
+
+    if request.method == "POST":
+        # Handle club creation
+        club_name = request.POST.get("name")
+        club_moto = request.POST.get("moto")
+        registration_form_link = request.POST.get("registration_form_link", None)
+        coordinator_roll = request.POST.get("coordinator_roll")
+
+        # Insert new club into the `clubs` table
+        cursor.execute(
+            """
+            INSERT INTO clubs (name, moto, registration_form_link) 
+            VALUES (%s, %s, %s)
+            """,
+            [club_name, club_moto, registration_form_link],
+        )
+        # Fetch the last inserted club ID
+        club_id = cursor.lastrowid
+
+        # Insert coordinator into the `clubmembers` table
+        cursor.execute(
+            """
+            INSERT INTO clubmembers (clubID, member_roll, their_role)
+            VALUES (%s, %s, %s)
+            """,
+            [club_id, coordinator_roll, "coordinator"],
+        )
+
+        # Redirect to refresh the page and show the updated list
+        return redirect("admin_club")
+
+    return render(request, "admin_anits/admin-club.html", {"clubs": clubs})
+
+
+from django.shortcuts import render
+from django.db import connection
+
+
+def feedback_page(request):
+    # Define the possible suggestion types
+    suggestion_types = [
+        "Faculty",
+        "Department",
+        "Infrastructure",
+        "Course",
+        "Management",
+        "Ragging",
+        "Others",
+    ]
+
+    # Fetch feedback grouped by type
+    cursor = connection.cursor()
+    feedback_data = {}
+    for suggestion_type in suggestion_types:
+        cursor.execute(
+            "SELECT message, date_time FROM suggestion WHERE type = %s ORDER BY date_time DESC",
+            [suggestion_type],
+        )
+        feedback_data[suggestion_type] = cursor.fetchall()
+
+    # Render the template
+    return render(
+        request,
+        "admin_anits/admin-feedback.html",
+        {"feedback_data": feedback_data, "suggestion_types": suggestion_types},
+    )

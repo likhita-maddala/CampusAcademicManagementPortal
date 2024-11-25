@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Feedback</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f4f4f4;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: auto;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+
+        .dropdown {
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .feedback-type {
+            margin-top: 20px;
+        }
+
+        .feedback {
+            margin-bottom: 15px;
+            padding: 10px;
+            background: #f9f9f9;
+            border-left: 4px solid #007bff;
+            border-radius: 5px;
+        }
+
+        .feedback p {
+            margin: 0;
+        }
+
+        .feedback .date {
+            font-size: 0.9em;
+            color: #666;
+            margin-top: 5px;
+        }
+    </style>
+    <script>
+        // JavaScript function to filter feedbacks
+        function filterFeedback() {
+            const selectedType = document.getElementById('feedback-type').value;
+            const feedbackSections = document.getElementsByClassName('feedback-type-section');
+            Array.from(feedbackSections).forEach(section => {
+                if (section.dataset.type === selectedType) {
+                    section.style.display = 'block';
+                } else {
+                    section.style.display = 'none';
+                }
+            });
+        }
+
+        // Automatically select "Management" on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            filterFeedback();
+        });
+    </script>
+</head>
+<body>
+    <div class="container">
+        <h1>Feedback</h1>
+
+        <!-- Dropdown for selecting feedback type -->
+        <div class="dropdown">
+            <label for="feedback-type">Select Feedback Type:</label>
+            <select id="feedback-type" onchange="filterFeedback()">
+                {% for suggestion_type in suggestion_types %}
+                    <option value="{{ suggestion_type }}" {% if suggestion_type == "Management" %}selected{% endif %}>
+                        {{ suggestion_type }}
+                    </option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <!-- Feedback Sections -->
+        {% for suggestion_type, feedbacks in feedback_data.items %}
+            <div class="feedback-type-section" data-type="{{ suggestion_type }}" style="display: none;">
+                <h2>{{ suggestion_type }}</h2>
+                {% if feedbacks %}
+                    {% for feedback in feedbacks %}
+                        <div class="feedback">
+                            <p>{{ feedback.0 }}</p>
+                            <div class="date">{{ feedback.1 }}</div>
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <p>No feedback available for this category.</p>
+                {% endif %}
+            </div>
+        {% endfor %}
+    </div>
+</body>
+</html>

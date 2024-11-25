@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Clubs Management</title>
+    <style>
+      body {
+        font-family: sans-serif;
+        margin: 0;
+        padding: 0;
+        background-color: #f4f4f4;
+      }
+
+      .container {
+        max-width: 800px;
+        margin: 20px auto;
+        padding: 20px;
+        background-color: #fff;
+        border-radius: 5px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+      }
+
+      h1 {
+        margin-bottom: 20px;
+      }
+
+      .button {
+        display: inline-block;
+        padding: 10px 20px;
+        background-color: #007bff;
+        color: #fff;
+        text-decoration: none;
+        border-radius: 5px;
+        margin-bottom: 20px;
+        cursor: pointer;
+      }
+
+      .button:hover {
+        background-color: #0056b3;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-bottom: 20px;
+      }
+
+      table,
+      th,
+      td {
+        border: 1px solid #ddd;
+      }
+
+      th,
+      td {
+        padding: 10px;
+        text-align: left;
+      }
+
+      .form-container {
+        display: none;
+        margin-top: 20px;
+        padding: 20px;
+        border: 1px solid #ddd;
+        background-color: #f9f9f9;
+        border-radius: 5px;
+      }
+
+      .form-container.active {
+        display: block;
+      }
+
+      .form-group {
+        margin-bottom: 15px;
+      }
+
+      .form-group label {
+        display: block;
+        margin-bottom: 5px;
+      }
+
+      .form-group input,
+      .form-group textarea {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>Clubs Management</h1>
+
+      <!-- Button to show the create club form -->
+      <div>
+        <div class="button" id="create-club-button">Create Club</div>
+      </div>
+      <!-- Create club form -->
+      <div class="form-container" id="create-club-form">
+        <form method="POST">
+          {% csrf_token %}
+          <div class="form-group">
+            <label for="name">Club Name:</label>
+            <input type="text" id="name" name="name" required />
+          </div>
+          <div class="form-group">
+            <label for="moto">Club Motto:</label>
+            <textarea id="moto" name="moto" rows="3" required></textarea>
+          </div>
+          <div class="form-group">
+            <label for="registration_form_link"
+              >Registration Link (Optional):</label
+            >
+            <input
+              type="url"
+              id="registration_form_link"
+              name="registration_form_link"
+            />
+          </div>
+          <div class="form-group">
+            <label for="coordinator_roll">Coordinator Roll Number:</label>
+            <input
+              type="text"
+              id="coordinator_roll"
+              name="coordinator_roll"
+              required
+            />
+          </div>
+          <button type="submit" class="button">Create Club</button>
+        </form>
+      </div>
+      <!-- Table to display existing clubs -->
+      <h2>Existing Clubs</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Club ID</th>
+            <th>Club Name</th>
+            <th>Motto</th>
+            <th>Registration Link</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for club in clubs %}
+          <tr>
+            <td>{{ club.0 }}</td>
+            <td>{{ club.1 }}</td>
+            <td>{{ club.2 }}</td>
+            <td>
+              {% if club.3 %}
+              <a href="{{ club.3 }}" target="_blank">Link</a>
+              {% else %} N/A {% endif %}
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+    <script>
+      // JavaScript to toggle form visibility
+      document
+        .getElementById("create-club-button")
+        .addEventListener("click", function () {
+          const form = document.getElementById("create-club-form");
+          form.classList.toggle("active");
+        });
+    </script>
+  </body>
+</html>
