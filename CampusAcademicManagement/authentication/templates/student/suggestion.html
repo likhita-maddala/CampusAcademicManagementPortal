@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Suggestions</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 20px;
+        padding: 0;
+        background-color: #f4f4f9;
+      }
+      h1 {
+        text-align: center;
+        color: #333;
+      }
+      .form-container {
+        margin: 20px auto;
+        max-width: 600px;
+        background: #fff;
+        padding: 20px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        border-radius: 10px;
+      }
+      .form-container form {
+        display: flex;
+        flex-direction: column;
+      }
+      .form-container select,
+      .form-container textarea {
+        margin-bottom: 15px;
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+      }
+      .form-container button {
+        background-color: #007bff;
+        color: #fff;
+        padding: 10px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+      }
+      .form-container button:hover {
+        background-color: #0056b3;
+      }
+      .suggestion-container {
+        margin: 20px auto;
+        max-width: 800px;
+        background: #fff;
+        padding: 20px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        border-radius: 10px;
+      }
+      .suggestion {
+        border-bottom: 1px solid #ddd;
+        padding: 10px 0;
+      }
+      .suggestion:last-child {
+        border-bottom: none;
+      }
+      .suggestion h3 {
+        color: #007bff;
+        margin: 0;
+      }
+      .suggestion p {
+        margin: 5px 0;
+      }
+      .suggestion small {
+        color: #666;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Suggestions</h1>
+
+    <div class="form-container">
+      <h3>Submit a Suggestion</h3>
+      <form method="POST">
+        {% csrf_token %}
+        <select name="type" required>
+          <option value="" disabled selected>Select Type</option>
+          {% for type in types %}
+          <option value="{{ type }}">{{ type }}</option>
+          {% endfor %}
+        </select>
+        <textarea
+          name="message"
+          placeholder="Enter your suggestion"
+          rows="5"
+          required
+        ></textarea>
+        <button type="submit">Submit</button>
+      </form>
+    </div>
+
+    <div class="suggestion-container">
+      <h3>Your Suggestions</h3>
+      {% for suggestion in suggestions %}
+      <div class="suggestion">
+        <h4>{{ suggestion.message }}</h4>
+        <p>{{ suggestion.type }}</p>
+        <small> Submitted on: {{ suggestion.date_time }} </small>
+      </div>
+      {% empty %}
+      <p>No suggestions available.</p>
+      {% endfor %}
+    </div>
+  </body>
+</html>

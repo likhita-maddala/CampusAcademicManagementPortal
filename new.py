@@ -1,1 +1,1 @@
-print("homies")
+a=10

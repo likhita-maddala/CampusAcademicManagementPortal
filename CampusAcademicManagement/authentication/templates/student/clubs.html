@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Clubs</title>
+    <style>
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 20px 0;
+        font-size: 18px;
+        text-align: left;
+      }
+      th,
+      td {
+        padding: 12px;
+        border: 1px solid #ddd;
+      }
+      th {
+        background-color: #f4f4f4;
+      }
+      a {
+        color: blue;
+        text-decoration: none;
+      }
+      a:hover {
+        text-decoration: underline;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Clubs</h1>
+    <table>
+      <thead>
+        <tr>
+          <th>Club Name</th>
+          <th>Motto</th>
+          <th>Number of Members</th>
+          <th>Coordinators</th>
+          <th>Registration Form</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for club in club_details %}
+        <tr>
+          <td>{{ club.name }}</td>
+          <td>{{ club.motto }}</td>
+          <td>{{ club.number_of_members }}</td>
+          <td>{{ club.coordinators }}</td>
+          <td>
+            {% if club.registration_form_link %}
+            <a href="{{ club.registration_form_link }}" target="_blank"
+              >Register</a
+            >
+            {% else %} No Link Available {% endif %}
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </body>
+</html>
