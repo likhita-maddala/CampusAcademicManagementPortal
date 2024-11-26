@@ -1,0 +1,96 @@
+<form method="POST" action="{% url 'add_student_information' %}">
+    {% csrf_token %}
+    
+    <!-- Student ID -->
+    <label for="studentID">Student ID:</label>
+    <input type="text" id="studentID" name="studentID" required><br><br>
+
+    <!-- Name -->
+    <label for="name">Name:</label>
+    <input type="text" id="name" name="name" required><br><br>
+
+    <!-- Department -->
+    <label for="deptID">Department:</label>
+    <select id="deptID" name="deptID" required>
+        <option value="a100">CSM</option>
+        <option value="a101">CSD</option>
+    </select><br><br>
+
+    <!-- Phone Number -->
+    <label for="phnNo">Phone Number:</label>
+    <input type="text" id="phnNo" name="phnNo" required><br><br>
+
+    <!-- Date of Birth -->
+    <label for="dob">Date of Birth:</label>
+    <input type="date" id="dob" name="dob" required><br><br>
+
+    <!-- Personal Email -->
+    <label for="personalMail">Personal Email:</label>
+    <input type="email" id="personalMail" name="personalMail" required><br><br>
+
+    <!-- Section -->
+    <label for="section">Section:</label>
+    <input type="text" id="section" name="section" required><br><br>
+
+    <!-- Date of Joining -->
+    <label for="date_of_joining">Date of Joining:</label>
+    <input type="date" id="date_of_joining" name="date_of_joining" required><br><br>
+
+    <!-- Father Details -->
+    <label for="fathername">Father's Name:</label>
+    <input type="text" id="fathername" name="fathername" required><br><br>
+
+    <label for="fatherphn">Father's Phone Number:</label>
+    <input type="text" id="fatherphn" name="fatherphn" required><br><br>
+
+    <label for="father_occupation">Father's Occupation:</label>
+    <input type="text" id="father_occupation" name="father_occupation" required><br><br>
+
+    <label for="fatherEducation">Father's Education:</label>
+    <input type="text" id="fatherEducation" name="fatherEducation" required><br><br>
+
+    <!-- Mother Details -->
+    <label for="mothername">Mother's Name:</label>
+    <input type="text" id="mothername" name="mothername" required><br><br>
+
+    <label for="motherphn">Mother's Phone Number:</label>
+    <input type="text" id="motherphn" name="motherphn" required><br><br>
+
+    <label for="mother_occupation">Mother's Occupation:</label>
+    <input type="text" id="mother_occupation" name="mother_occupation" required><br><br>
+
+    <label for="motherEducation">Mother's Education:</label>
+    <input type="text" id="motherEducation" name="motherEducation" required><br><br>
+
+    <!-- Address -->
+    <label for="address">Address:</label>
+    <textarea id="address" name="address" required></textarea><br><br>
+
+    <!-- Hostel or Day Scholar -->
+    <label for="hostel_or_dayScholar">Hostel or Day Scholar:</label>
+    <select id="hostel_or_dayScholar" name="hostel_or_dayScholar" required>
+        <option value="hostel">Hostel</option>
+        <option value="dayscholar">Day Scholar</option>
+    </select><br><br>
+
+    <!-- College Bus -->
+    <label for="collegeBus">College Bus:</label>
+    <select id="collegeBus" name="collegeBus" required>
+        <option value="yes">Yes</option>
+        <option value="no">No</option>
+    </select><br><br>
+
+    <!-- Aadhar Number -->
+    <label for="aadharNo">Aadhar Number:</label>
+    <input type="text" id="aadharNo" name="aadharNo" required><br><br>
+
+    <!-- Fee Reimbursement -->
+    <label for="fee_reimbursement">Fee Reimbursement:</label>
+    <select id="fee_reimbursement" name="fee_reimbursement" required>
+        <option value="yes">Yes</option>
+        <option value="no">No</option>
+    </select><br><br>
+
+    <!-- Submit button -->
+    <button type="submit">Submit</button>
+</form>
