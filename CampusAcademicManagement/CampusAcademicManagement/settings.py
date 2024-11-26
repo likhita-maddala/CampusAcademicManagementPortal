@@ -78,8 +78,8 @@ DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.mysql",
         "NAME": "anitsdb",
-        "USER": "harshini",
-        "PASSWORD": "harshini",
+        "USER": "root",
+        "PASSWORD": "bhagyasree@000",
         "HOST": "localhost",
         "PORT": "3306",
     }

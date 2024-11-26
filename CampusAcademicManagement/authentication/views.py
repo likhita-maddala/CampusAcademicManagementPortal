@@ -4,6 +4,7 @@ from django.db import connection
 from .forms import LoginForm
 from decimal import Decimal
 from django.utils.timezone import now
+from .models import Student, Authentication, StudentPersonalInfo, Roles
 
 
 # Login view
@@ -173,7 +174,7 @@ def student_profile_view(request):
             SELECT studentID, name, deptID, phnNo, dob, personalMail, section, 
                    date_of_joining, fathername, mothername, fatherphn, motherphn, 
                    father_occupation, mother_occupation, fatherEducation, motherEducation,
-                   address, hostel_or_dayScholar, collegeBus, aadharNo, fee_reimbursement 
+                   address, hostel_or_dayScholar, collegeBus, adhaarNo, fee_reimbursement 
             FROM studentpersonalinfo 
             WHERE studentID = %s
             """,
@@ -481,3 +482,72 @@ def feedback_page(request):
         "admin_anits/admin-feedback.html",
         {"feedback_data": feedback_data, "suggestion_types": suggestion_types},
     )
+
+
+from django.http import HttpResponseRedirect
+from django.urls import reverse
+
+
+def add_student_information(request):
+    if request.method == 'POST':
+        # Get the data from the form
+        studentID = request.POST['studentID']
+        name = request.POST['name']
+        deptID = request.POST['deptID']
+        phnNo = request.POST['phnNo']
+        dob = request.POST['dob']
+        personalMail = request.POST['personalMail']
+        section = request.POST['section']
+        date_of_joining = request.POST['date_of_joining']
+        fathername = request.POST['fathername']
+        fatherphn = request.POST['fatherphn']
+        father_occupation = request.POST['father_occupation']
+        fatherEducation = request.POST['fatherEducation']
+        mothername = request.POST['mothername']
+        motherphn = request.POST['motherphn']
+        mother_occupation = request.POST['mother_occupation']
+        motherEducation = request.POST['motherEducation']
+        address = request.POST['address']
+        hostel_or_dayScholar = request.POST['hostel_or_dayScholar']
+        collegeBus = request.POST['collegeBus']
+        aadharNo = request.POST['aadharNo']
+        fee_reimbursement = request.POST['fee_reimbursement']
+
+        # Insert into roles table
+        with connection.cursor() as cursor:
+            cursor.execute("""
+                INSERT INTO roles (rollno, role) 
+                VALUES (%s, %s)
+            """, [studentID, 'student'])
+
+        # Insert into student table
+        with connection.cursor() as cursor:
+            cursor.execute("""
+                INSERT INTO student (studentID, name) 
+                VALUES (%s, %s)
+            """, [studentID, name])
+
+        # Insert into authentication table (with password 'anits123')
+        with connection.cursor() as cursor:
+            cursor.execute("""
+                INSERT INTO authentication (rollno, password, email) 
+                VALUES (%s, %s, %s)
+            """, [studentID, 'anits123', personalMail])
+
+        # Insert into studentpersonalinfo table
+        with connection.cursor() as cursor:
+            cursor.execute("""
+                INSERT INTO studentpersonalinfo (
+                    studentID, deptID, phnNo, dob, personalMail, section, date_of_joining, fathername,
+                    mothername, fatherphn, motherphn, father_occupation, mother_occupation, fatherEducation,
+                    motherEducation, address, hostel_or_dayScholar, collegeBus, adhaarNo, fee_reimbursement
+                ) 
+                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+            """, [studentID, deptID, phnNo, dob, personalMail, section, date_of_joining, fathername, 
+                  mothername, fatherphn, motherphn, father_occupation, mother_occupation, fatherEducation, 
+                  motherEducation, address, hostel_or_dayScholar, collegeBus, aadharNo, fee_reimbursement])
+
+        # Redirect to a success page or back to the form
+        return HttpResponseRedirect(reverse('add_student_information'))  # Redirect to the add_student page
+
+    return render(request, 'admin_anits/add_student_information.html')

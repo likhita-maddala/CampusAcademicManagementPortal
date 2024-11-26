@@ -14,4 +14,5 @@ urlpatterns = [
     path("admin_anits/home/", views.admin_home, name="admin_home"),
     path("club/", views.admin_club, name="admin_club"),
     path("feedback/", views.feedback_page, name="feedback_page"),
+    path('add_student/', views.add_student_information, name='add_student_information'),
 ]
